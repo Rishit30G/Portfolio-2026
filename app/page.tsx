@@ -21,6 +21,9 @@ export default function Home() {
   const buttonRef = useRef<HTMLDivElement>(null);
   const ishitWrapRef = useRef<HTMLSpanElement>(null);
   const ishitTextRef = useRef<HTMLSpanElement>(null);
+  const skillsContainerRef = useRef<HTMLDivElement>(null);
+  const skillHighlightRef = useRef<HTMLDivElement>(null);
+  const activeSkillRef = useRef<HTMLParagraphElement | null>(null);
   const [showOverlay, setShowOverlay] = useState(true);
 
   const handleLogoEnter = () => {
@@ -38,6 +41,65 @@ export default function Home() {
       duration: 0.35,
       ease: 'sine.inOut',
     });
+  };
+
+  const handleSkillHover = (e: React.MouseEvent<HTMLParagraphElement>) => {
+    const el = e.currentTarget;
+    const container = skillsContainerRef.current;
+    const highlight = skillHighlightRef.current;
+    if (!container || !highlight) return;
+
+    if (!el.textContent?.trim()) {
+      if (activeSkillRef.current) {
+        gsap.set(activeSkillRef.current, { color: 'var(--color-foreground)' });
+        activeSkillRef.current = null;
+      }
+      gsap.to(highlight, { opacity: 0, duration: 0.3, ease: 'sine.out' });
+      return;
+    }
+
+    if (activeSkillRef.current && activeSkillRef.current !== el) {
+      gsap.set(activeSkillRef.current, { color: 'var(--color-foreground)' });
+    }
+
+    const cr = container.getBoundingClientRect();
+    const er = el.getBoundingClientRect();
+    const isFirst = !activeSkillRef.current;
+    activeSkillRef.current = el;
+
+    if (isFirst) {
+      gsap.set(highlight, {
+        x: er.left - cr.left,
+        y: er.top - cr.top,
+        width: er.width,
+        height: er.height,
+      });
+      gsap.to(highlight, { opacity: 1, duration: 0.25 });
+    } else {
+      gsap.to(highlight, {
+        x: er.left - cr.left,
+        y: er.top - cr.top,
+        width: er.width,
+        height: er.height,
+        opacity: 1,
+        duration: 0.35,
+        ease: 'power3.out',
+      });
+    }
+
+    gsap.set(el, { color: 'var(--color-background)' });
+  };
+
+  const handleSkillsLeave = () => {
+    const highlight = skillHighlightRef.current;
+    if (!highlight) return;
+
+    if (activeSkillRef.current) {
+      gsap.set(activeSkillRef.current, { color: 'var(--color-foreground)' });
+      activeSkillRef.current = null;
+    }
+
+    gsap.to(highlight, { opacity: 0, duration: 0.3, ease: 'sine.out' });
   };
 
   useGSAP(() => {
@@ -171,10 +233,10 @@ export default function Home() {
         <div className="flex justify-between items-center w-full h-3/5 pl-4">
           <p
             ref={paraRef}
-            className="text-4xl tracking-tight w-md text-balance leading-tight"
+            className="text-4xl tracking-tight w-sm text-balance leading-tight"
           >
-            A CREATIVE WEB DESIGNER AND AI AUTOMATIONS SPECIALIST WHO LOVES TO
-            CREATE BEAUTIFUL THINGS.
+            A CREATIVE WEB DESIGNER AND AI GENERALIST WHO
+            BUILDS THE BEST.
           </p>
           <div
             ref={imageRef}
@@ -216,6 +278,69 @@ export default function Home() {
               />
             </div>
           </div>
+        </div>
+      </div>
+      <div className='w-[1600px] mx-auto mt-30'>
+        <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
+          <span className='text-3xl tracking-wide text-foreground-muted font-mono'>001</span>
+          <h2 className='text-[10rem] tracking-tighter'>
+            About 
+          </h2>
+        </div>
+        <div className='flex justify-between mt-20'>
+           <div className='w-1/2'>
+              <video src='/video.mp4' autoPlay loop muted className='w-full h-full object-cover aspect-video' />
+           </div>
+           <div className='w-md'>
+            <p className='text-4xl tracking-tight text-justify text-right leading-tight'> 
+             23 Y/O AI ENGINEER WORKING REMOTELY.
+            </p>
+            <p className='text-4xl tracking-tight  text-justify text-right leading-tight mt-8'> 
+               YAPPING ABOUT AI AND WEB DEVELOPMENT.
+            </p>
+           
+            <p className='text-4xl tracking-tight  text-justify text-right leading-tight mt-30'> 
+               LIFE MAKES US LEARN NEW THINGS EVERYDAY.
+            </p>
+            <p className='text-4xl tracking-tight text-justify text-right leading-tight mt-8'> 
+              DOING WFH FOR A US-PUNE BASED AGENCY.
+            </p>
+           </div>
+        </div>
+      </div>
+      <div className='w-[1600px] mx-auto mt-30'>
+        <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
+        <h2 className='text-[10rem] tracking-tighter'>
+            Skills
+          </h2>
+          <span className='text-3xl tracking-wide text-foreground-muted font-mono'>002</span>
+        </div>
+        {/* <div className='text-6xl tracking-tight mt-20'>
+          <p>AI</p>
+        </div> */}
+        <div ref={skillsContainerRef} className='relative' onMouseLeave={handleSkillsLeave}>
+          <div
+            ref={skillHighlightRef}
+            className='absolute top-0 left-0 bg-foreground pointer-events-none opacity-0'
+          />
+          <div className='grid grid-cols-8 text-center text-xl justify-between mt-10 ml-20'>
+            {['MCP', 'AI Agents', 'AI Skills', '', 'LLMs', 'AI Automation', 'RAG', 'Prompt Eng'].map((skill, i) => (
+              <p key={i} className='py-8 relative z-10 cursor-pointer' onMouseEnter={handleSkillHover}>{skill}</p>
+            ))}
+          </div>
+          <div className='grid grid-cols-8 text-center text-xl justify-between mt-10 mr-20'>
+            {['Next.js', 'Typescript', 'React', 'Tailwind CSS', '', '', 'PostgreSQL', 'WordPress'].map((skill, i) => (
+              <p key={i} className='py-8 relative z-10 cursor-pointer' onMouseEnter={handleSkillHover}>{skill}</p>
+            ))}
+          </div>
+          <div className='grid grid-cols-8 text-center text-xl justify-between mt-10 ml-20'>
+            {['Speaker', 'Content', 'Advisor', '', '', 'Design', 'Writing', 'AI Consulting'].map((skill, i) => (
+              <p key={i} className='py-8 relative z-10 cursor-pointer' onMouseEnter={handleSkillHover}>{skill}</p>
+            ))}
+          </div>
+        </div>
+        <div className='text-6xl tracking-tight mt-20'>
+          <p>Tech Stack</p>
         </div>
       </div>
     </>
