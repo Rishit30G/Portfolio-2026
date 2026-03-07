@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Link from 'next/link';
 import { ArrowRightIcon } from '@phosphor-icons/react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -11,6 +12,12 @@ import NavLink from '@/components/NavLink';
 gsap.registerPlugin(useGSAP, SplitText);
 
 const NAV_LINKS = ['Home', 'About', 'Services', 'Contact'] as const;
+
+const BLOG_POSTS = [
+  { title: 'My 2026 Setup & Tech Stack', date: '6th March 2026', slug: '' },
+  { title: 'Delhi food is getting better', date: '6th March 2026', slug: '' },
+  { title: 'My 2026 Setup & Tech Stack', date: '6th March 2026', slug: '' },
+] as const;
 
 export default function Home() {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -24,6 +31,7 @@ export default function Home() {
   const skillsContainerRef = useRef<HTMLDivElement>(null);
   const skillHighlightRef = useRef<HTMLDivElement>(null);
   const activeSkillRef = useRef<HTMLParagraphElement | null>(null);
+  const blogCursorRef = useRef<HTMLDivElement>(null);
   const [showOverlay, setShowOverlay] = useState(true);
 
   const handleLogoEnter = () => {
@@ -102,7 +110,34 @@ export default function Home() {
     gsap.to(highlight, { opacity: 0, duration: 0.3, ease: 'sine.out' });
   };
 
+  const handleBlogMouseEnter = () => {
+    gsap.fromTo(
+      blogCursorRef.current,
+      { clipPath: 'inset(50% 50% 50% 50%)' },
+      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power3.out' }
+    );
+  };
+
+  const handleBlogMouseLeave = () => {
+    gsap.killTweensOf(blogCursorRef.current, 'clipPath');
+    gsap.to(blogCursorRef.current, {
+      clipPath: 'inset(50% 50% 50% 50%)',
+      duration: 0.4,
+      ease: 'power3.in',
+    });
+  };
+
+  const handleBlogMouseMove = (e: React.MouseEvent) => {
+    gsap.to(blogCursorRef.current, {
+      x: e.clientX,
+      y: e.clientY,
+      duration: 0.25,
+      ease: 'power2.out',
+    });
+  };
+
   useGSAP(() => {
+
     const nameSplit = SplitText.create(nameRef.current, {
       type: 'words',
       mask: 'words',
@@ -281,10 +316,10 @@ export default function Home() {
         </div>
       </div>
       <div className='w-[1600px] mx-auto mt-30'>
-        <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
+      <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
           <span className='text-3xl tracking-wide text-foreground-muted font-mono'>001</span>
           <h2 className='text-[10rem] tracking-tighter'>
-            About 
+            About
           </h2>
         </div>
         <div className='flex justify-between mt-20'>
@@ -334,14 +369,106 @@ export default function Home() {
             ))}
           </div>
           <div className='grid grid-cols-8 text-center text-xl justify-between mt-10 ml-20'>
-            {['Speaker', 'Content', 'Advisor', '', '', 'Design', 'Writing', 'AI Consulting'].map((skill, i) => (
+            {['Speaker', 'Content', 'Mentor', '', '', 'Design', 'Writing', 'AI Consulting'].map((skill, i) => (
               <p key={i} className='py-8 relative z-10 cursor-pointer' onMouseEnter={handleSkillHover}>{skill}</p>
             ))}
           </div>
         </div>
-        <div className='text-6xl tracking-tight mt-20'>
-          <p>Tech Stack</p>
+      </div>
+      <div className='w-[1600px] mx-auto mt-30'>
+        <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
+          <span className='text-3xl tracking-wide text-foreground-muted font-mono'>003</span>
+          <h2 className='text-[10rem] tracking-tighter'>
+            People
+          </h2>
         </div>
+        <div className='mt-10'>
+          <div className='flex gap-20'>
+          <div className='py-8 border-r border-foreground-muted/40 pr-12 min-w-[700px]'>
+              <p className='text-2xl tracking-tight leading-loose'>Rishit works at <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>blazing speed</span>. He sets up processes and executes efficiently. He completed all assignments on time with higher-than-expected quality.</p>
+              <div className='flex justify-between items-end mt-20'>
+                <p className='text-sm tracking-tight text-foreground-muted'>Gaurav Sen</p>
+                <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>InterviewReady</span> . CEO</p>
+              </div>
+            </div>
+            <div className='py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]'>
+              <p className='text-2xl tracking-tight leading-loose'>Rishit worked <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>excpetionally well</span> on our website. His attention to detail and commitment to quality made him a valuable asset to our team.</p>
+              <div className='flex justify-between items-end mt-20'>
+                <p className='text-sm tracking-tight text-foreground-muted'>Ankur Sharma</p>
+                <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>TurtlNest</span> . Co-Founder</p>
+              </div>
+            </div>
+            <div className='py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]'>
+              <p className='text-2xl tracking-tight leading-loose'>Rishit&apos;s <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>outstanding performance</span> at Code For Gov Tech earned him a SamagraX internship. His npm package powers Ama Krushi for Odisha farmers.</p>
+              <div className='flex justify-between items-end mt-20'>
+                <p className='text-sm tracking-tight text-foreground-muted'>Abhishek Kumar</p>
+                <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>Delta6Labs</span> . Tech Lead</p>
+              </div>
+            </div>
+          
+            <div className='py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]'>
+              <p className='text-2xl tracking-tight leading-loose'>Rishit designed the full system from ground zero. He learned real-world product functioning and built modular, extensible products. I <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>highly recommend</span> him.</p>
+              <div className='flex justify-between items-end mt-20'>
+                <p className='text-sm tracking-tight text-foreground-muted'>Nischal Gaba</p>
+                <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>Prodigal AI</span> . CEO</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='w-[1600px] mx-auto mt-30'>
+        <div className='justify-between flex items-baseline'>
+          <h2 className='text-[10rem] tracking-tighter'>
+            Blogs
+          </h2>
+          <span className='text-3xl tracking-wide text-foreground-muted font-mono'>004</span>
+        </div>
+        <div
+          className='mt-10'
+          onMouseEnter={handleBlogMouseEnter}
+          onMouseLeave={handleBlogMouseLeave}
+          onMouseMove={handleBlogMouseMove}
+        >
+          <div className='grid grid-cols-12 border-b border-foreground-muted/40 pb-4'>
+            <h3 className='text-md tracking-tight col-span-6 pl-4'>TITLE</h3>
+            <p className='text-md tracking-tight col-span-4'>DATE</p>
+            <p className='text-md tracking-tight col-span-2'>VISIT</p>
+          </div>
+          {BLOG_POSTS.map((post, i) => (
+            <Link
+              key={i}
+              href={post.slug ? `/blog/${post.slug}` : '#'}
+              className={`group relative overflow-hidden block ${
+                i < BLOG_POSTS.length - 1 ? 'border-b border-dashed border-foreground-muted/40' : ''
+              }`}
+            >
+              <div className='absolute inset-x-0 bottom-0 h-0 bg-foreground transition-[height] duration-300 ease-in-out group-hover:h-full' />
+              <div className='relative z-10 grid grid-cols-12 py-6 text-2xl tracking-tight cursor-pointer'>
+                <h3 className='col-span-6 transition-colors duration-300 group-hover:text-background pl-4'>{post.title}</h3>
+                <p className='col-span-4 transition-colors duration-300 group-hover:text-background'>{post.date}</p>
+                <p className='col-span-2'>
+                  <ArrowRightIcon size={30} weight='light' className='inline-block group-hover:-rotate-45 group-hover:text-background transition-all duration-300 ease-in-out' />
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Blog post cursor-following image */}
+      <div
+        ref={blogCursorRef}
+        className='fixed top-0 left-0 w-52 h-52 pointer-events-none z-50'
+        style={{ clipPath: 'inset(50% 50% 50% 50%)' }}
+      >
+        <img
+          src='/Portrait.png'
+          alt=''
+          className='w-full h-full object-cover'
+        />
+      </div>
+      <div className='w-[1600px] mx-auto mt-30'>
+        <h3 className='text-[10rem] tracking-tight text-center'>GET IN TOUCH</h3>
       </div>
     </>
   );
