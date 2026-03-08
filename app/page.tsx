@@ -6,11 +6,12 @@ import { ArrowRightIcon, ArrowUpRightIcon } from '@phosphor-icons/react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { SplitText } from 'gsap/SplitText';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import CityTimeFlipper from '@/components/CityTimeFlipper';
 import NavLink from '@/components/NavLink';
 import AnimatedUnderlineLink from '@/components/AnimatedUnderlineLink';
 
-gsap.registerPlugin(useGSAP, SplitText);
+gsap.registerPlugin(useGSAP, SplitText, ScrollTrigger);
 
 const NAV_LINKS = ['Home', 'About', 'Services', 'Contact'] as const;
 
@@ -35,6 +36,9 @@ export default function Home() {
   const blogCursorRef = useRef<HTMLDivElement>(null);
   const blogImgRef = useRef<HTMLImageElement>(null);
   const blogIsOpenRef = useRef(false);
+  const aboutTextRef = useRef<HTMLDivElement>(null);
+  const peopleSectionRef = useRef<HTMLDivElement>(null);
+  const peopleTrackRef = useRef<HTMLDivElement>(null);
   const [showOverlay, setShowOverlay] = useState(true);
 
   const handleLogoEnter = () => {
@@ -220,6 +224,43 @@ export default function Home() {
       },
       '-=0.6'
     );
+
+    if (aboutTextRef.current) {
+      const aboutParas = gsap.utils.toArray<HTMLParagraphElement>(
+        aboutTextRef.current.querySelectorAll('p')
+      );
+      aboutParas.forEach((para) => {
+        const split = SplitText.create(para, { type: 'lines', mask: 'lines' });
+        gsap.set(split.lines, { yPercent: 100 });
+        gsap.to(split.lines, {
+          yPercent: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: para,
+            start: 'top 85%',
+          },
+        });
+      });
+    }
+
+    const section = peopleSectionRef.current;
+    const track = peopleTrackRef.current;
+    if (section && track) {
+      const scrollAmount = track.scrollWidth - section.offsetWidth;
+      gsap.to(track, {
+        x: -scrollAmount,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${scrollAmount}`,
+          pin: true,
+          scrub: 1,
+        },
+      });
+    }
   }, []);
 
   return (
@@ -335,7 +376,7 @@ export default function Home() {
            <div className='w-1/2'>
               <video src='/video.mp4' autoPlay loop muted className='w-full h-full object-cover aspect-video' />
            </div>
-           <div className='w-md'>
+           <div ref={aboutTextRef} className='w-md'>
             <p className='text-4xl tracking-tight text-justify text-right leading-tight'> 
              23 Y/O AI ENGINEER WORKING REMOTELY.
             </p>
@@ -381,22 +422,26 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className='w-[1600px] mx-auto mt-30'>
+      <div ref={peopleSectionRef} className='w-[1600px] mx-auto mt-30'>
         <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
           <span className='text-3xl tracking-wide text-foreground-muted font-mono'>003</span>
           <h2 className='text-[10rem] tracking-tighter'>
             People
           </h2>
         </div>
-        <div className='mt-10'>
-          <div className='flex gap-20'>
-          <div className='py-8 border-r border-foreground-muted/40 pr-12 min-w-[700px]'>
+        <div className='mt-10 overflow-hidden'>
+          <div ref={peopleTrackRef} className='flex gap-20'>
+          <Link href='https://www.linkedin.com/in/rishit-gupta-4b18841b1/' target='_blank'>
+           <div className='py-8 border-r border-foreground-muted/40 pr-12 min-w-[700px]'>
               <p className='text-2xl tracking-tight leading-loose'>Rishit works at <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>blazing speed</span>. He sets up processes and executes efficiently. He completed all assignments on time with higher-than-expected quality.</p>
               <div className='flex justify-between items-end mt-20'>
                 <p className='text-sm tracking-tight text-foreground-muted'>Gaurav Sen</p>
                 <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>InterviewReady</span> . CEO</p>
               </div>
             </div>
+            </Link>
+
+            <Link href='https://turtlnest.com' target='_blank'></Link>
             <div className='py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]'>
               <p className='text-2xl tracking-tight leading-loose'>Rishit worked <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>excpetionally well</span> on our website. His attention to detail and commitment to quality made him a valuable asset to our team.</p>
               <div className='flex justify-between items-end mt-20'>
@@ -404,6 +449,8 @@ export default function Home() {
                 <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>TurtlNest</span> . Co-Founder</p>
               </div>
             </div>
+
+            <Link href='https://www.linkedin.com/in/rishit-gupta-4b18841b1/' target='_blank'>
             <div className='py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]'>
               <p className='text-2xl tracking-tight leading-loose'>Rishit&apos;s <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>outstanding performance</span> at Code For Gov Tech earned him a SamagraX internship. His npm package powers Ama Krushi for Odisha farmers.</p>
               <div className='flex justify-between items-end mt-20'>
@@ -411,14 +458,18 @@ export default function Home() {
                 <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>Delta6Labs</span> . Tech Lead</p>
               </div>
             </div>
+            </Link>
+
           
-            <div className='py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]'>
+          <Link href='https://www.linkedin.com/in/rishit-gupta-4b18841b1/' target='_blank'>
+            <div className='py-8 pr-8 min-w-[700px]'>
               <p className='text-2xl tracking-tight leading-loose'>Rishit designed the full system from ground zero. He learned real-world product functioning and built modular, extensible products. I <span className='font-bold text-3xl mx-1 tracking-normal bg-foreground text-background px-4 py-2 group-hover:rounded-2xl transition-all ease-in-out duration-300'>highly recommend</span> him.</p>
               <div className='flex justify-between items-end mt-20'>
                 <p className='text-sm tracking-tight text-foreground-muted'>Nischal Gaba</p>
                 <p className='text-sm tracking-tight'><span className='text-2xl ml-1'>Prodigal AI</span> . CEO</p>
               </div>
             </div>
+            </Link>
           </div>
         </div>
       </div>
@@ -495,7 +546,7 @@ export default function Home() {
           Actively building for those who dream big and want to create impactful solutions.
         </p>
         <div className='flex justify-between items-baseline mt-10'>
-        <p className='text-xl tracking-tight font-mono'> hello@rishitgupta.com</p>
+          <p className='text-xl tracking-tight font-mono'> mailto: <span className='underline underline-offset-10'>hello@rishitgupta.com</span></p>
         <div
             ref={buttonRef}
             className="group relative overflow-hidden border border-foreground py-8 px-12 rounded-full mr-10 mb-14 cursor-pointer"
@@ -516,7 +567,7 @@ export default function Home() {
       </div>
       </div>
 
-      <div className='sticky bottom-0 bg-foreground pb-10'>
+      <div className='sticky bottom-0 bg-foreground pb-10 -mt-20'>
           <div className='text-center'>
           <p className='text-[18rem] tracking-tight text-background'>
             Rishit 
@@ -527,7 +578,7 @@ export default function Home() {
               Gupta
             </span>
           </p>
-          <div className='flex justify-between items-center gap-2 text-3xl w-[1500px] mx-auto'>
+          <div className='flex justify-between items-center gap-2 text-3xl w-[1400px] mx-auto -mt-2'>
             <AnimatedUnderlineLink href='https://www.youtube.com/@rishit30g' className='text-background'>YouTube <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
             <AnimatedUnderlineLink href='https://github.com/Rishit30G' className='text-background'>GitHub <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
             <AnimatedUnderlineLink href='https://www.linkedin.com/in/rishit-gupta-4b18841b1/' className='text-background'>LinkedIn <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
