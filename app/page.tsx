@@ -2,21 +2,22 @@
 
 import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRightIcon } from '@phosphor-icons/react';
+import { ArrowRightIcon, ArrowUpRightIcon } from '@phosphor-icons/react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { SplitText } from 'gsap/SplitText';
 import CityTimeFlipper from '@/components/CityTimeFlipper';
 import NavLink from '@/components/NavLink';
+import AnimatedUnderlineLink from '@/components/AnimatedUnderlineLink';
 
 gsap.registerPlugin(useGSAP, SplitText);
 
 const NAV_LINKS = ['Home', 'About', 'Services', 'Contact'] as const;
 
 const BLOG_POSTS = [
-  { title: 'My 2026 Setup & Tech Stack', date: '6th March 2026', slug: '' },
-  { title: 'Delhi food is getting better', date: '6th March 2026', slug: '' },
-  { title: 'My 2026 Setup & Tech Stack', date: '6th March 2026', slug: '' },
+  { title: 'My 2026 Setup & Tech Stack', date: '6th March 2026', slug: '', image: '/Portrait.png' },
+  { title: 'Delhi food is getting better', date: '6th March 2026', slug: '', image: '/Portrait2.png' },
+  { title: 'My 2026 Setup & Tech Stack', date: '6th March 2026', slug: '', image: '/Portrait3.png' },
 ] as const;
 
 export default function Home() {
@@ -32,6 +33,8 @@ export default function Home() {
   const skillHighlightRef = useRef<HTMLDivElement>(null);
   const activeSkillRef = useRef<HTMLParagraphElement | null>(null);
   const blogCursorRef = useRef<HTMLDivElement>(null);
+  const blogImgRef = useRef<HTMLImageElement>(null);
+  const blogIsOpenRef = useRef(false);
   const [showOverlay, setShowOverlay] = useState(true);
 
   const handleLogoEnter = () => {
@@ -110,15 +113,20 @@ export default function Home() {
     gsap.to(highlight, { opacity: 0, duration: 0.3, ease: 'sine.out' });
   };
 
-  const handleBlogMouseEnter = () => {
-    gsap.fromTo(
-      blogCursorRef.current,
-      { clipPath: 'inset(50% 50% 50% 50%)' },
-      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power3.out' }
-    );
+  const handleBlogMouseEnter = (image: string) => {
+    if (blogImgRef.current) blogImgRef.current.src = image;
+    if (!blogIsOpenRef.current) {
+      blogIsOpenRef.current = true;
+      gsap.fromTo(
+        blogCursorRef.current,
+        { clipPath: 'inset(50% 50% 50% 50%)' },
+        { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.5, ease: 'power3.out' }
+      );
+    }
   };
 
   const handleBlogMouseLeave = () => {
+    blogIsOpenRef.current = false;
     gsap.killTweensOf(blogCursorRef.current, 'clipPath');
     gsap.to(blogCursorRef.current, {
       clipPath: 'inset(50% 50% 50% 50%)',
@@ -232,6 +240,7 @@ export default function Home() {
         </div>
       )}
 
+      <div className="relative z-10 bg-background">
       <div className="flex flex-col justify-end h-screen">
         {/* Header */}
         <div className="flex justify-between items-start w-full h-1/5 pr-10 pl-4">
@@ -288,7 +297,7 @@ export default function Home() {
 
         {/* Footer row */}
         <div className="flex justify-between items-end w-full h-1/5">
-          <h1 ref={nameRef} className="text-[10rem] tracking-tight">
+          <h1 ref={nameRef} className="text-[10rem] tracking-tighter">
             Rishit
             <span
               style={{ fontFamily: 'var(--font-apparel)' }}
@@ -350,9 +359,6 @@ export default function Home() {
           </h2>
           <span className='text-3xl tracking-wide text-foreground-muted font-mono'>002</span>
         </div>
-        {/* <div className='text-6xl tracking-tight mt-20'>
-          <p>AI</p>
-        </div> */}
         <div ref={skillsContainerRef} className='relative' onMouseLeave={handleSkillsLeave}>
           <div
             ref={skillHighlightRef}
@@ -425,19 +431,19 @@ export default function Home() {
         </div>
         <div
           className='mt-10'
-          onMouseEnter={handleBlogMouseEnter}
-          onMouseLeave={handleBlogMouseLeave}
-          onMouseMove={handleBlogMouseMove}
         >
           <div className='grid grid-cols-12 border-b border-foreground-muted/40 pb-4'>
             <h3 className='text-md tracking-tight col-span-6 pl-4'>TITLE</h3>
             <p className='text-md tracking-tight col-span-4'>DATE</p>
             <p className='text-md tracking-tight col-span-2'>VISIT</p>
           </div>
+          <div onMouseMove={handleBlogMouseMove}>
           {BLOG_POSTS.map((post, i) => (
             <Link
               key={i}
               href={post.slug ? `/blog/${post.slug}` : '#'}
+              onMouseEnter={() => handleBlogMouseEnter(post.image)}
+              onMouseLeave={handleBlogMouseLeave}
               className={`group relative overflow-hidden block ${
                 i < BLOG_POSTS.length - 1 ? 'border-b border-dashed border-foreground-muted/40' : ''
               }`}
@@ -452,6 +458,13 @@ export default function Home() {
               </div>
             </Link>
           ))}
+
+          </div>
+          <div className='flex items-center justify-center mt-10'>
+            <div className='p-4 border-foreground-muted/40 hover:bg-foreground hover:text-background group transition-all duration-300 ease-in-out'>
+            <p className='text-xl tracking-tight group-hover:text-background'>View More <ArrowRightIcon size={25} weight='regular' className='inline-block group-hover:-rotate-45 ml-1 group-hover:text-background transition-all duration-300 ease-in-out' /></p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -462,14 +475,68 @@ export default function Home() {
         style={{ clipPath: 'inset(50% 50% 50% 50%)' }}
       >
         <img
+          ref={blogImgRef}
           src='/Portrait.png'
           alt=''
           className='w-full h-full object-cover'
         />
       </div>
+
+
+
       <div className='w-[1600px] mx-auto mt-30'>
-        <h3 className='text-[10rem] tracking-tight text-center'>GET IN TOUCH</h3>
+        <div className='justify-between flex items-baseline border-b border-foreground-muted/40'>
+          <span className='text-3xl tracking-wide text-foreground-muted font-mono'>005</span>
+          <h2 className='text-[10rem] tracking-tighter'>
+            Contact
+          </h2>
+        </div>
+        <p className='text-4xl tracking-tight w-md uppercase text-justify mt-10'>
+          Actively building for those who dream big and want to create impactful solutions.
+        </p>
+        <div className='flex justify-between items-baseline mt-10'>
+        <p className='text-xl tracking-tight font-mono'> hello@rishitgupta.com</p>
+        <div
+            ref={buttonRef}
+            className="group relative overflow-hidden border border-foreground py-8 px-12 rounded-full mr-10 mb-14 cursor-pointer"
+          >
+            <div className="absolute inset-x-0 bottom-0 h-0 bg-foreground transition-[height] duration-300 ease-in-out group-hover:h-full rounded-full" />
+            <div className="relative z-10 flex items-center">
+              <span className="text-3xl transition-colors duration-300 group-hover:text-background">
+                LET&apos;S TALK{' '}
+              </span>
+              <ArrowRightIcon
+                size={50}
+                weight="light"
+                className="inline-block ml-4 transition-transform duration-300 ease-out group-hover:rotate-[-40deg] group-hover:text-background"
+              />
+            </div>
+          </div>
+        </div>
       </div>
+      </div>
+
+      <div className='sticky bottom-0 bg-foreground pb-10'>
+          <div className='text-center'>
+          <p className='text-[18rem] tracking-tight text-background'>
+            Rishit 
+            <span
+              style={{ fontFamily: 'var(--font-apparel)' }}
+              className="font-medium ml-8"
+            >
+              Gupta
+            </span>
+          </p>
+          <div className='flex justify-between items-center gap-2 text-3xl w-[1500px] mx-auto'>
+            <AnimatedUnderlineLink href='https://www.youtube.com/@rishit30g' className='text-background'>YouTube <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
+            <AnimatedUnderlineLink href='https://github.com/Rishit30G' className='text-background'>GitHub <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
+            <AnimatedUnderlineLink href='https://www.linkedin.com/in/rishit-gupta-4b18841b1/' className='text-background'>LinkedIn <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
+            <AnimatedUnderlineLink href='https://x.com/rishit30g' className='text-background'>Twitter <ArrowUpRightIcon size={25} weight='regular' className='inline-block ml-1 transition-transform duration-300 ease-in-out group-hover:rotate-45' /></AnimatedUnderlineLink>
+          </div>
+        </div>
+      </div>
+
+
     </>
   );
 }
