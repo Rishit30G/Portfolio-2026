@@ -325,11 +325,11 @@ export default function Home() {
           </p>
           <div
             ref={imageRef}
-            className="w-110 h-110 mb-20"
+            className="w-110 h-120 mb-20"
             style={{ clipPath: 'inset(100% 0% 0% 0%)' }}
           >
             <img
-              src="/Portrait.png"
+              src="/P1.png"
               alt="Portrait of Rishit Gupta"
               className="w-full h-full object-cover"
             />
