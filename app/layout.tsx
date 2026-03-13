@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const suisseIntl = localFont({
   src: "../public/6804c6e6e59f54740751a4b4_SuisseIntl-Regular.otf",
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${suisseIntl.variable} ${apparel.variable} antialiased`}
       >
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

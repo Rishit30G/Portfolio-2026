@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "b7d401d70a6f6f2bd29bb36ee803564cb071cc43bf5701e32a5dedbf88cc1466"
     },
+    "implement_lenis_scroll": {
+      "source": "jerrar670/surf-website",
+      "sourceType": "github",
+      "computedHash": "595d911a46b2953b97ad2d77bf3bd59b335a5a728355a8ef1091f3615c08c0db"
+    },
     "nextjs-app-router-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",
