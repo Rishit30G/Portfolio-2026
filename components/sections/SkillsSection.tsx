@@ -11,6 +11,8 @@ export default function SkillsSection() {
   const highlightRef = useRef<HTMLDivElement>(null);
   const activeSkillRef = useRef<HTMLParagraphElement | null>(null);
 
+  const allSkills = SKILLS_ROWS.flatMap((row) => row.skills).filter(Boolean);
+
   const handleSkillHover = (e: React.MouseEvent<HTMLParagraphElement>) => {
     const el = e.currentTarget;
     const container = containerRef.current;
@@ -79,18 +81,27 @@ export default function SkillsSection() {
   return (
     <SectionContainer id="skills">
       <SectionHeader number="002" title="Skills" numberFirst={false} />
-      <div ref={containerRef} className="relative" onMouseLeave={handleSkillsLeave}>
+      <div ref={containerRef} className="relative max-lg:hidden" onMouseLeave={handleSkillsLeave}>
         <div
           ref={highlightRef}
           className="absolute top-0 left-0 bg-foreground pointer-events-none opacity-0"
         />
         {SKILLS_ROWS.map((row, i) => (
-          <div key={i} className={`grid grid-cols-8 text-center text-xl max-lg:text-2xl justify-between mt-10 ${row.className}`}>
+          <div key={i} className={`grid grid-cols-8 text-center text-2xl justify-between mt-10 ${row.className}`}>
             {row.skills.map((skill, j) => (
               <p key={j} className="py-8 relative z-10 cursor-pointer" onMouseEnter={handleSkillHover}>{skill}</p>
             ))}
           </div>
         ))}
+      </div>
+      <div className="lg:hidden">
+        <div className="flex flex-wrap gap-6 justify-center mt-8">
+          {allSkills.map((skill, index) => (
+            <span key={index} className="px-3 py-1.5 text-xl">
+              {skill}
+            </span>
+          ))}
+        </div>
       </div>
     </SectionContainer>
   );

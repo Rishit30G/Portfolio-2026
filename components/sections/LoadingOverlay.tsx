@@ -15,7 +15,7 @@ export default function LoadingOverlay({ show, overlayRef, counterRef }: Loading
       <div className="overflow-hidden">
         <span
           ref={counterRef}
-          className="text-background text-3xl tracking-tight block"
+          className="text-background text-3xl max-lg:text-[10rem] tracking-tight block"
         >
           0
         </span>

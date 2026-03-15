@@ -21,7 +21,6 @@ export interface Testimonial {
   role: string;
   href: string;
   cardClassName: string;
-  linkWrapped: boolean;
 }
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -33,8 +32,7 @@ export const TESTIMONIALS: Testimonial[] = [
     company: 'InterviewReady',
     role: 'CEO',
     href: 'https://www.linkedin.com/in/rishit-gupta-4b18841b1/',
-    cardClassName: 'py-8 border-r border-foreground-muted/40 pr-12 min-w-[700px]',
-    linkWrapped: true,
+    cardClassName: 'py-8 pr-10 border-r border-foreground-muted/40 max-lg:px-4 max-lg:py-0 lg:w-[700px] w-[350px] '
   },
   {
     before: 'Rishit worked ',
@@ -44,8 +42,7 @@ export const TESTIMONIALS: Testimonial[] = [
     company: 'TurtlNest',
     role: 'Co-Founder',
     href: 'https://turtlnest.com',
-    cardClassName: 'py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]',
-    linkWrapped: false,
+    cardClassName: 'py-8 px-10 border-r border-foreground-muted/40 max-lg:px-4 max-lg:py-0 lg:w-[700px] w-[350px] '
   },
   {
     before: "Rishit's ",
@@ -55,8 +52,7 @@ export const TESTIMONIALS: Testimonial[] = [
     company: 'Delta6Labs',
     role: 'Tech Lead',
     href: 'https://www.linkedin.com/in/rishit-gupta-4b18841b1/',
-    cardClassName: 'py-8 pr-20 border-r border-foreground-muted/40 min-w-[700px]',
-    linkWrapped: true,
+    cardClassName: 'py-8 px-10  border-r border-foreground-muted/40 max-lg:px-4 max-lg:py-0 lg:w-[700px] w-[350px]',
   },
   {
     before: 'Rishit designed the full system from ground zero. He learned real-world product functioning and built modular, extensible products. I ',
@@ -66,8 +62,7 @@ export const TESTIMONIALS: Testimonial[] = [
     company: 'Prodigal AI',
     role: 'CEO',
     href: 'https://www.linkedin.com/in/rishit-gupta-4b18841b1/',
-    cardClassName: 'py-8 pr-8 min-w-[700px]',
-    linkWrapped: true,
+    cardClassName: 'py-8 pl-10  max-lg:px-4 max-lg:py-0 lg:w-[700px] w-[350px]',
   },
 ];
 

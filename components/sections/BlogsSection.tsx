@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ArrowRightIcon } from '@phosphor-icons/react';
@@ -13,9 +13,20 @@ export default function BlogsSection() {
   const imgRef = useRef<HTMLImageElement>(null);
   const isOpenRef = useRef(false);
 
+  const subscribe = useCallback((cb: () => void) => {
+    const mql = window.matchMedia('(min-width: 1024px)');
+    mql.addEventListener('change', cb);
+    return () => mql.removeEventListener('change', cb);
+  }, []);
+  const isLg = useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia('(min-width: 1024px)').matches,
+    () => false,
+  );
+
   const handleMouseEnter = (e: React.MouseEvent, image: string) => {
+    if (!isLg) return;
     if (imgRef.current) imgRef.current.src = image;
-    // Set position immediately so the image appears at the cursor, not at (0,0)
     gsap.set(cursorRef.current, { x: e.clientX, y: e.clientY });
     if (!isOpenRef.current) {
       isOpenRef.current = true;
@@ -28,6 +39,7 @@ export default function BlogsSection() {
   };
 
   const handleMouseLeave = () => {
+    if (!isLg) return;
     isOpenRef.current = false;
     gsap.killTweensOf(cursorRef.current, 'clipPath');
     gsap.to(cursorRef.current, {
@@ -38,6 +50,7 @@ export default function BlogsSection() {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isLg) return;
     gsap.to(cursorRef.current, {
       x: e.clientX,
       y: e.clientY,
@@ -52,9 +65,9 @@ export default function BlogsSection() {
         <SectionHeader number="004" title="Blogs" numberFirst={false} showBorder={false} />
         <div className="mt-10">
           <div className="grid grid-cols-12 border-b border-foreground-muted/40 pb-4">
-            <h3 className="text-md tracking-tight col-span-6 pl-4">TITLE</h3>
-            <p className="text-md tracking-tight col-span-4">DATE</p>
-            <p className="text-md tracking-tight col-span-2">VISIT</p>
+            <h3 className="text-md tracking-tight col-span-6 pl-4 max-lg:col-span-10">TITLE</h3>
+            <p className="text-md tracking-tight col-span-4 max-lg:hidden">DATE</p>
+            <p className="text-md tracking-tight col-span-2 max-lg:col-span-2">VISIT</p>
           </div>
           <div onMouseMove={handleMouseMove}>
             {BLOG_POSTS.map((post, i) => (
@@ -68,10 +81,10 @@ export default function BlogsSection() {
                 }`}
               >
                 <div className="absolute inset-x-0 bottom-0 h-0 bg-foreground transition-[height] duration-300 ease-in-out group-hover:h-full" />
-                <div className="relative z-10 grid grid-cols-12 py-6 text-2xl tracking-tight cursor-pointer">
-                  <h3 className="col-span-6 transition-colors duration-300 group-hover:text-background pl-4">{post.title}</h3>
-                  <p className="col-span-4 transition-colors duration-300 group-hover:text-background">{post.date}</p>
-                  <p className="col-span-2">
+                <div className="relative z-10 grid grid-cols-12 py-6 text-2xl max-lg:text-xl tracking-tight cursor-pointer">
+                  <h3 className="col-span-6 transition-colors duration-300 group-hover:text-background pl-4 max-lg:col-span-10">{post.title}</h3>
+                  <p className="col-span-4 transition-colors duration-300 group-hover:text-background max-lg:hidden">{post.date}</p>
+                  <p className="col-span-2 max-lg:col-span-2">
                     <ArrowRightIcon size={30} weight="light" className="inline-block group-hover:-rotate-45 group-hover:text-background transition-all duration-300 ease-in-out" />
                   </p>
                 </div>
@@ -91,7 +104,7 @@ export default function BlogsSection() {
 
       <div
         ref={cursorRef}
-        className="fixed top-0 left-0 w-52 h-52 pointer-events-none z-50"
+        className="fixed top-0 left-0 w-52 h-52 pointer-events-none z-50 max-lg:hidden"
         style={{ clipPath: 'inset(50% 50% 50% 50%)' }}
       >
         <img
